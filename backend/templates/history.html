@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prediction History</title>
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body class="dashboard-body">
+    <div class="page-shell">
+        <header class="topbar">
+            <div>
+                <p class="eyebrow">Forecast Archive</p>
+                <h1>Prediction History</h1>
+                <p class="subtext">Review recent rainfall forecasts and recorded model metrics.</p>
+            </div>
+            <div class="topbar-actions">
+                <a class="nav-btn" href="/">Back to dashboard</a>
+                <div class="user-chip">
+                    <span class="status-dot"></span>
+                    <span>{{ user }}</span>
+                </div>
+            </div>
+        </header>
+
+        <section class="panel history-panel">
+            <div class="panel-heading">
+                <div>
+                    <p class="section-label">Recent Runs</p>
+                    <h3>Stored session history</h3>
+                </div>
+            </div>
+
+            {% if prediction_history %}
+            <div class="history-table-wrap">
+                <table class="history-table">
+                    <thead>
+                        <tr>
+                            <th>Area</th>
+                            <th>Rainfall</th>
+                            <th>R2</th>
+                            <th>RMSE</th>
+                            <th>Generated On</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for row in prediction_history %}
+                        <tr>
+                            <td>{{ row.city }}</td>
+                            <td>{{ row.rainfall }} mm</td>
+                            <td>{{ row.metrics.R2 }}</td>
+                            <td>{{ row.metrics.RMSE }}</td>
+                            <td>{{ row.generated_at }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <p class="subtext">No predictions have been generated in this session yet.</p>
+            {% endif %}
+        </section>
+    </div>
+</body>
+</html>

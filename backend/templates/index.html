@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rainfall Analytics Dashboard</title>
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body class="dashboard-body">
+    <div class="page-shell">
+        <header class="topbar">
+            <div>
+                <p class="eyebrow">Rainfall Forecast Platform</p>
+                <h1>Rainfall Analytics Dashboard</h1>
+                <p class="subtext">A cleaner forecasting workspace for area predictions, model evaluation, and historical rainfall comparison.</p>
+            </div>
+            <div class="topbar-actions">
+                <a class="nav-btn" href="/history">History</a>
+                <a class="nav-btn" href="/download-report">Download report</a>
+                <div class="user-chip">
+                    <span class="status-dot"></span>
+                    <span>{{ user }}</span>
+                </div>
+                <form action="/logout" method="post">
+                    <button class="secondary-btn" type="submit">Sign out</button>
+                </form>
+            </div>
+        </header>
+
+        <main class="dashboard-grid">
+            <section class="panel summary-panel">
+                <div class="summary-copy">
+                    <p class="section-label">Operational Summary</p>
+                    <h2>Generate rainfall predictions with a cleaner, structured workflow.</h2>
+                    <p>Select an area, enter the weather variables, and review the model output with chart controls and full-width historical comparison below.</p>
+                </div>
+                <div class="summary-stats">
+                    <article class="stat-card">
+                        <span>Area coverage</span>
+                        <strong>{{ cities|length }}</strong>
+                    </article>
+                    <article class="stat-card">
+                        <span>Sequence window</span>
+                        <strong>12 steps</strong>
+                    </article>
+                    <article class="stat-card">
+                        <span>Weather signals</span>
+                        <strong>7</strong>
+                    </article>
+                </div>
+            </section>
+
+            <section class="panel input-panel">
+                <div class="panel-heading">
+                    <div>
+                        <p class="section-label">Prediction Workspace</p>
+                        <h3>Weather input form</h3>
+                    </div>
+                    <span class="badge">Authenticated</span>
+                </div>
+
+                <label class="field-label" for="city">Area</label>
+                <select id="city"></select>
+
+                <div id="inputs" class="input-grid"></div>
+
+                <div class="btn-row">
+                    <button class="ghost-btn" type="button" onclick="sample1()">Baseline</button>
+                    <button class="ghost-btn" type="button" onclick="sample2()">Coastal</button>
+                    <button class="ghost-btn" type="button" onclick="sample3()">Storm</button>
+                    <button class="ghost-btn" type="button" onclick="randomFill()">Auto fill</button>
+                </div>
+
+                <button class="primary-btn" type="button" onclick="predict()">Run rainfall prediction</button>
+                <p id="loading" class="loading-text">Running model and preparing chart...</p>
+                <p id="formError" class="error-text"></p>
+            </section>
+
+            <section class="panel side-panel">
+                <div class="panel-heading">
+                    <div>
+                        <p class="section-label">Forecast Output</p>
+                        <h3>Prediction result</h3>
+                    </div>
+                </div>
+
+                <div class="result-card-main">
+                    <div class="result-number" id="result">-- mm</div>
+                    <p class="result-caption" id="cityLabel">Area: --</p>
+                    <p class="muted-text" id="time">Awaiting model run</p>
+                </div>
+
+                <div class="panel-heading metrics-heading">
+                    <div>
+                        <p class="section-label">Model Quality</p>
+                        <h3>Evaluation metrics</h3>
+                    </div>
+                </div>
+                <div id="metrics" class="metrics-list"></div>
+            </section>
+
+            <section class="panel overview-panel">
+                <div class="panel-heading">
+                    <div>
+                        <p class="section-label">Area Snapshot</p>
+                        <h3>Available forecast areas</h3>
+                    </div>
+                </div>
+                <div id="overviewCards" class="overview-grid"></div>
+            </section>
+
+            <section class="panel chart-panel">
+                <div class="panel-heading">
+                    <div>
+                        <p class="section-label">Historical Comparison</p>
+                        <h3>Actual vs predicted rainfall</h3>
+                    </div>
+                    <div class="chart-actions">
+                        <button class="chart-toggle active" type="button" data-series="actual">Actual</button>
+                        <button class="chart-toggle active" type="button" data-series="predicted">Predicted</button>
+                        <button class="chart-range active" type="button" data-range="300">300</button>
+                        <button class="chart-range" type="button" data-range="150">150</button>
+                        <button class="chart-range" type="button" data-range="50">50</button>
+                    </div>
+                </div>
+                <div class="chart-wrap">
+                    <canvas id="chart"></canvas>
+                </div>
+            </section>
+        </main>
+
+        <footer class="project-footer">
+            <div class="footer-block">
+                <p class="section-label">Project Overview</p>
+                <h3>Transfer learning rainfall forecasting workflow</h3>
+                <p>
+                    This project uses an LSTM-based transfer model built for rainfall forecasting in the Kaveri delta
+                    region. The model was first trained on broader regional patterns across many latitude and longitude
+                    conditions, then fine-tuned at the individual area level to capture local rainfall behavior more
+                    accurately. This deeper workflow showed more stable and stronger performance than standard models,
+                    and each prediction here is supported by 7 weather inputs, a 12-step sequence context, evaluation
+                    metrics, and historical actual-versus-predicted comparison.
+                </p>
+
+                <div class="footer-benefits">
+                    <article class="benefit-card">
+                        <h4>More stable local forecasting</h4>
+                        <p>Regional pretraining plus area-level fine-tuning helps the system respond better to local rainfall patterns.</p>
+                    </article>
+                    <article class="benefit-card">
+                        <h4>Better than basic baselines</h4>
+                        <p>The project is designed to outperform standard standalone models by preserving both regional and local context.</p>
+                    </article>
+                    <article class="benefit-card">
+                        <h4>Operational decision support</h4>
+                        <p>Predictions are paired with metrics and comparison plots so results can be reviewed more clearly.</p>
+                    </article>
+                </div>
+            </div>
+            <div class="footer-block footer-meta">
+                <div class="footer-chip">Areas covered: Karaikal, Kumbakonam, Mayiladuthurai, Thanjavur, Tiruvarur</div>
+                <div class="footer-chip">Model depth: regional transfer learning across Kaveri delta conditions, then area-level fine-tuning</div>
+                <div class="footer-chip">Inputs: temperature, dew point, pressure, wind_u, wind_v, cloud cover, humidity</div>
+                <div class="footer-chip">Outputs: rainfall estimate, evaluation metrics, and historical performance graph</div>
+            </div>
+        </footer>
+    </div>
+
+    <script id="cities-data" type="application/json">{{ cities|tojson }}</script>
+    <script id="overview-data" type="application/json">{{ city_overview|tojson }}</script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="/static/script.js"></script>
+</body>
+</html>

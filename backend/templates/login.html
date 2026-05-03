@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign In | Rainfall Intelligence Suite</title>
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body class="login-body">
+    <div class="login-layout">
+        <section class="login-intro">
+            <p class="eyebrow">Forecast Operations Console</p>
+            <h1>Rainfall Intelligence Suite</h1>
+            <p class="subtext">
+                Secure access for analysts reviewing area rainfall predictions, model fit, and environmental inputs.
+            </p>
+            <div class="login-feature-list">
+                <article class="intro-card">
+                    <span>Operational focus</span>
+                    <strong>Forecasting dashboard</strong>
+                </article>
+                <article class="intro-card">
+                    <span>Coverage</span>
+                    <strong>5 area models</strong>
+                </article>
+                <article class="intro-card">
+                    <span>Sequence window</span>
+                    <strong>{{ sequence_length }} steps</strong>
+                </article>
+            </div>
+        </section>
+
+        <section class="login-panel">
+            <div class="auth-card auth-shell">
+                <div class="auth-switch">
+                    <button class="auth-tab active" type="button" data-mode="login">Log in</button>
+                    <button class="auth-tab" type="button" data-mode="register">Register</button>
+                </div>
+
+                <div class="auth-mode active" id="loginMode">
+                    <div class="panel-heading">
+                        <div>
+                            <p class="section-label">Secure Login</p>
+                            <h2>Sign in to continue</h2>
+                        </div>
+                    </div>
+
+                    <p class="auth-help">Default user: <strong>{{ default_username }}</strong> / <strong>{{ default_password }}</strong></p>
+
+                    <form method="post" class="login-form">
+                        <input type="hidden" name="action" value="login">
+
+                        <label class="field-label" for="username">Username</label>
+                        <input id="username" name="username" type="text" placeholder="Enter username" required>
+
+                        <label class="field-label" for="password">Password</label>
+                        <input id="password" name="password" type="password" placeholder="Enter password" required>
+
+                        {% if error %}
+                        <p class="error-text login-error">{{ error }}</p>
+                        {% endif %}
+
+                        <button class="primary-btn" type="submit">Access dashboard</button>
+                    </form>
+                </div>
+
+                <div class="auth-mode" id="registerMode">
+                    <div class="panel-heading">
+                        <div>
+                            <p class="section-label">Register User</p>
+                            <h2>Create a local account</h2>
+                        </div>
+                    </div>
+
+                    <form method="post" class="login-form">
+                        <input type="hidden" name="action" value="register">
+
+                        <label class="field-label" for="register_username">Username</label>
+                        <input id="register_username" name="register_username" type="text" placeholder="Choose username" required>
+
+                        <label class="field-label" for="register_password">Password</label>
+                        <input id="register_password" name="register_password" type="password" placeholder="Choose password" required>
+
+                        <label class="field-label" for="confirm_password">Confirm password</label>
+                        <input id="confirm_password" name="confirm_password" type="password" placeholder="Re-enter password" required>
+
+                        {% if register_error %}
+                        <p class="error-text login-error">{{ register_error }}</p>
+                        {% endif %}
+                        {% if register_success %}
+                        <p class="success-text login-success">{{ register_success }}</p>
+                        {% endif %}
+
+                        <button class="ghost-btn auth-submit" type="submit">Register user</button>
+                    </form>
+                </div>
+            </div>
+        </section>
+    </div>
+    <script>
+        const authTabs = document.querySelectorAll(".auth-tab");
+        const authModes = {
+            login: document.getElementById("loginMode"),
+            register: document.getElementById("registerMode")
+        };
+
+        let activeMode = "{{ 'register' if register_error or register_success else 'login' }}";
+
+        function setAuthMode(mode) {
+            activeMode = mode;
+            authTabs.forEach((tab) => {
+                tab.classList.toggle("active", tab.dataset.mode === mode);
+            });
+            Object.entries(authModes).forEach(([key, node]) => {
+                node.classList.toggle("active", key === mode);
+            });
+        }
+
+        authTabs.forEach((tab) => {
+            tab.addEventListener("click", () => setAuthMode(tab.dataset.mode));
+        });
+
+        setAuthMode(activeMode);
+    </script>
+</body>
+</html>
