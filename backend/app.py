@@ -17,6 +17,9 @@ app = Flask(__name__)
 CORS(app)
 app.secret_key = os.environ.get("FLASK_SECRET_KEY", "rainfall-dashboard-secret")
 
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+PROJECT_ROOT = os.path.abspath(os.path.join(BASE_DIR, ".."))
+
 APP_USERNAME = os.environ.get("APP_USERNAME", "admin")
 APP_PASSWORD = os.environ.get("APP_PASSWORD", "admin123")
 USERS = {APP_USERNAME: APP_PASSWORD}
@@ -32,7 +35,7 @@ SEQUENCE_LENGTH = 12
 # LOAD MODELS
 # ================================
 def load_city(city):
-    path = f"../{city}"
+    path = os.path.join(PROJECT_ROOT, city)
 
     lstm = load_model(f"{path}/lstm_finetuned.keras")
 
@@ -235,7 +238,7 @@ def predict():
     # ================================
     # 🔥 LOAD JUPYTER GRAPH (FIXED)
     # ================================
-    graph_df = pd.read_csv(f"../{city}/graph_data.csv")
+    graph_df = pd.read_csv(os.path.join(PROJECT_ROOT, city, "graph_data.csv"))
 
     actual = np.maximum(graph_df["actual"].values, 0)
     predicted = np.maximum(graph_df["predicted"].values, 0)
